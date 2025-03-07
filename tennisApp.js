@@ -1,5 +1,4 @@
 const readline = require('readline');
-let loginCondition = false;
 
 const playerInfo = {
     _players: {
@@ -34,6 +33,43 @@ const playerInfo = {
     }
 }
 
+//App Menu Function
+function appMenu(){
+    const rlAppMenu = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    console.log("Welcome to the Australian Tennis App.");
+    console.log('1. View Player Details');
+    console.log('2. Add Player');
+    console.log('3. Add Game');
+    console.log('4. Exit');
+    rlAppMenu.question("Please select an option from the menu below by entering the number corresponding to the option: ", (menu) => {
+        switch (parseInt(menu.trim(), 10)) {
+            case 1:
+                rlAppMenu.close();
+                PlayerSearchPage();
+                break;
+            case 2:
+                rlAppMenu.close();
+                addPlayer();
+                break;
+            case 3:
+                rlAppMenu.close();
+                addGame();
+                break;
+            case 4:
+                rlAppMenu.close();
+                console.log("Thank you for using the Australian Tennis App. Goodbye!");
+                break;
+            default:
+                console.log("Invalid input. Please try again.");
+                rlAppMenu.close();
+                appMenu();
+        }
+    });
+}
+
 //Player Search Loop Function
 const playerSearch = () => {
     const rlPlayerSearch = readline.createInterface({
@@ -43,10 +79,10 @@ const playerSearch = () => {
     rlPlayerSearch.question("\nWould you like to search for another player? (yes/no):", (search) => {
         if (search.toLowerCase().trim() === "yes") {
             rlPlayerSearch.close();
-            appLoop();
+            PlayerSearchPage();
         } else if (search.toLowerCase().trim() === "no") {
-            console.log("Thank you for using the Australian Tennis App.");
             rlPlayerSearch.close();
+            appMenu();
         } else {
             console.log("Invalid input. Please try again.");
             rlPlayerSearch.close();
@@ -54,28 +90,92 @@ const playerSearch = () => {
         }
     });
 }
-// Add Player Function
-const addPlayer = (newName, newAge, newRanking) => {
+//Add Player Info Function
+const addPlayerInfo = (newName, newAge, newRanking) => {
     let playerKey = `player${Object.keys(playerInfo.players).length + 1}`;
-    playerInfo.players[playerKey] = {
-      details: {
-        name: newName,
-        age: newAge,
-        ranking: newRanking,
-      },
-      games: []
-    };
-}
+        playerInfo.players[playerKey] = {
+        details: {
+            name: newName,
+            age: newAge,
+            ranking: newRanking,
+        },
+        games: []
+        };
+    }
+// Add Player Function
+const addPlayer = () => {
+    const rlAddPlayer = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rlAddPlayer.question("Enter the player's name: ", (name) => {
+        newName = name;
+        rlAddPlayer.question("Enter the player's age: ", (age) => {
+            newAge = parseInt(age, 10);
+            rlAddPlayer.question("Enter the player's ranking: ", (ranking) => {
+                newRanking = parseInt(ranking, 10);
+                rlAddPlayer.close();
+                addPlayerInfo(newName, newAge, newRanking);
+                console.log("Player added successfully!");
+                appMenu();
+            });
+        });
+    });
+};
 
 // Add Game Function
-const addGame = (playerKey, opponent, setsFor, setsAgainst, result) => {
-    if (playerInfo.players[playerKey]) {
-      playerInfo.players[playerKey].games.push({ opponent, setsFor, setsAgainst, result });
-    } else {
-      console.log("Player not found!");
-    }
-}
+const addGame = () => {
+    const rlAddGame = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 
+    rlAddGame.question('Enter the player\'s full name: ', (name) => {
+        const playerKey = findPlayerKey(name);
+        if (playerKey === null) {
+            console.log("Player not found!");
+            rlAddGame.close();
+            appMenu();
+            return;
+        }
+
+        rlAddGame.question('Enter the opponent\'s name: ', (opponent) => {
+            rlAddGame.question('Enter the number of sets won by the player: ', (setsFor) => {
+                rlAddGame.question('Enter the number of sets won by the opponent: ', (setsAgainst) => {
+                    rlAddGame.question('Enter the result (Won/Lost): ', (result) => {
+                        playerInfo.players[playerKey].games.push({
+                            opponent: opponent,
+                            setsFor: parseInt(setsFor, 10),
+                            setsAgainst: parseInt(setsAgainst, 10),
+                            result: result
+                        });
+                        console.log(`Game added for ${playerInfo.players[playerKey].details.name}.`);
+                        rlAddGame.close();
+
+                        // Add another game or return to menu
+                        const rlGameAddition = readline.createInterface({
+                            input: process.stdin,
+                            output: process.stdout
+                        });
+                        rlGameAddition.question("\nWould you like to enter another game? (yes/no):", (gameAdd) => {
+                            if (gameAdd.toLowerCase().trim() === "yes") {
+                                rlGameAddition.close();
+                                addGame();
+                            } else if (gameAdd.toLowerCase().trim() === "no") {
+                                rlGameAddition.close();
+                                appMenu();
+                            } else {
+                                console.log("Invalid input. Please try again.");
+                                rlGameAddition.close();
+                                appMenu();
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    });
+};
 
 //find player key
 function findPlayerKey(name) {
@@ -99,9 +199,8 @@ function infoReturn(player) {
     }
 }
 
-
 //Player Info Function
-const appLoop = () => {
+const PlayerSearchPage = () => {
     const rlPlayerInfo = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -116,10 +215,11 @@ const appLoop = () => {
         } else {
             console.log("Player not found. Please try again.");
             rlPlayerInfo.close();
-            appLoop();
-        }
-    });
-}
+            PlayerSearchPage();
+        
+        }});
+    };
+    
 
 //Admin Login Details
 const setUsername = "admin";
@@ -142,14 +242,7 @@ function login () {
             rl.close();
             if (username === setUsername && userPassword === setPassword) {
                 console.log("Login Successful!");
-                console.log("Welcome to the Australian Tennis App.");
-                loginCondition = true;
-            
-
-                //App Content
-                if (loginCondition === true) {
-                    appLoop();
-                }
+                appMenu();
             } else {
                 console.log("Invalid Username or Password. Please try again.");
                 login();
