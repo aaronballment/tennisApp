@@ -26,6 +26,18 @@ const playerInfo = {
                 { opponent: 'Novak Djokovic', setsFor: 3, setsAgainst: 1, result: "Won" },
                 { opponent: 'Daniil Medvedev', setsFor: 3, setsAgainst: 2, result: "Won" },
             ]
+        },
+        _player3: {
+            details: {
+                name: "Thanasi Kokkinakis",
+                age: 28,
+                ranking: 45,
+            },
+            games: [
+                { opponent: 'Carlos Alcaraz', setsFor: 2, setsAgainst: 3, result: "Lost" },
+                { opponent: 'Stefanos Tsitsipas', setsFor: 3, setsAgainst: 1, result: "Won" },
+                { opponent: 'Andrey Rublev', setsFor: 0, setsAgainst: 3, result: "Lost" },
+            ]
         }
     },
     get players() {
