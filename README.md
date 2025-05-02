@@ -1,3 +1,3 @@
 # tennisApp
 
-###Track your own stats against your favourite players
+Track your own stats against your favourite players
